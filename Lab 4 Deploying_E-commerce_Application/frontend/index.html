@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-commerce Store</title>
+</head>
+<body>
+    <h1>Welcome to Our E-commerce Store</h1>
+    <h2>Products</h2>
+    <div id="products"></div>
+    <h2>Your Cart</h2>
+    <div id="cart"></div>
+
+    <script>
+        const INGRESS_URL = 'http://<external-ip>'; // Replace <external-ip> with the actual IP address
+
+        // Function to fetch products from the catalog service
+        function fetchProducts() {
+            fetch(`${INGRESS_URL}/api/catalog/products`)
+                .then(response => response.json())
+                .then(data => {
+                    const productsDiv = document.getElementById('products');
+                    productsDiv.innerHTML = ''; // Clear existing products
+                    data.forEach(product => {
+                        const productDiv = document.createElement('div');
+                        productDiv.innerHTML = `Name: ${product.name}, Price: ${product.price}`;
+                        const addButton = document.createElement('button');
+                        addButton.innerText = 'Add to Cart';
+                        addButton.onclick = () => addToCart(product);
+                        productDiv.appendChild(addButton);
+                        productsDiv.appendChild(productDiv);
+                    });
+                })
+                .catch(error => console.error('Error fetching products:', error));
+        }
+
+        // Function to add a product to the cart
+        function addToCart(product) {
+            fetch(`${INGRESS_URL}/api/cart/cart`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(product),
+            })
+            .then(response => response.json())
+            .then(data => {
+                const cartDiv = document.getElementById('cart');
+                cartDiv.innerHTML = ''; // Clear existing cart items
+                data.forEach(item => {
+                    const itemDiv = document.createElement('div');
+                    itemDiv.innerHTML = `Name: ${item.name}, Price: ${item.price}`;
+                    cartDiv.appendChild(itemDiv);
+                });
+            })
+            .catch(error => console.error('Error adding to cart:', error));
+        }
+
+        // Initial fetch of products when the page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            fetchProducts();
+        });
+    </script>
+</body>
+</html>

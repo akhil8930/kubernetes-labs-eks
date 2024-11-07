@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: catalog-deployment
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: catalog
+  template:
+    metadata:
+      labels:
+        app: catalog
+    spec:
+      containers:
+      - name: catalog
+        image: <aws_account_id>.dkr.ecr.ap-south-1.amazonaws.com/ecommerce-catalog:latest
+        ports:
+        - containerPort: 5000

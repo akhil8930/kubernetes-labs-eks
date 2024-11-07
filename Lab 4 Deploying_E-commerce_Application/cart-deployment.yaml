@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cart-deployment
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: cart
+  template:
+    metadata:
+      labels:
+        app: cart
+    spec:
+      containers:
+      - name: cart
+        image: <aws_account_id>.dkr.ecr.ap-south-1.amazonaws.com/ecommerce-cart:latest
+        ports:
+        - containerPort: 5001
